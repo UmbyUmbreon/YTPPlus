@@ -8,6 +8,7 @@ package zone.arctic.ytpplus;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import org.apache.commons.exec.CommandLine;
@@ -504,7 +505,72 @@ public class EffectsFactory {
             new File(toolBox.TEMP + "black.png").delete();
             new File(toolBox.TEMP + "concatsquidward.txt").delete();
         } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
-    }  
+    }
+
+    public void effect_Stutter(String video) {
+        System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + " initiated");
+
+        try {
+            File in = new File(video);
+            File temp = new File(toolBox.TEMP + "temp.mp4");
+            if (in.exists())
+                in.renameTo(temp);
+            StringWriter sw = new StringWriter();
+            for (int i = 1; i <= randomInt(3, 10); i++) {
+                sw.append("file 'temp.mp4'\r\n");
+            }
+
+            PrintWriter concatFile = new PrintWriter(toolBox.TEMP + "temp.txt", "UTF-8");
+            concatFile.print(sw.toString());
+            concatFile.close();
+
+            String command = toolBox.FFMPEG
+                    + " -f concat -i " + toolBox.TEMP + "temp.txt"
+                    + " -ar 44100"
+                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
+                    + " -y " + video;
+            CommandLine cmdLine = CommandLine.parse(command);
+            DefaultExecutor executor = new DefaultExecutor();
+            int exitValue = executor.execute(cmdLine);
+            temp.delete();
+            new File(toolBox.TEMP + "temp.txt").delete();
+        } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
+    }
+
+    public void effect_FastStutter(String video) {
+        System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + " initiated");
+
+        try {
+            // Snip the video down even further
+            String trim = video + "_t";
+            toolBox.snipVideo(video, new TimeStamp("0:0:0"), new TimeStamp("0:0:0.04"), trim);
+            trim += ".mp4";
+
+            File in = new File(trim);
+            File temp = new File(toolBox.TEMP + "temp.mp4");
+            if (in.exists())
+                in.renameTo(temp);
+            StringWriter sw = new StringWriter();
+            for (int i = 1; i <= randomInt(10, 40); i++) {
+                sw.append("file 'temp.mp4'\r\n");
+            }
+
+            PrintWriter concatFile = new PrintWriter(toolBox.TEMP + "temp.txt", "UTF-8");
+            concatFile.print(sw.toString());
+            concatFile.close();
+
+            String command = toolBox.FFMPEG
+                    + " -f concat -i " + toolBox.TEMP + "temp.txt"
+                    + " -ar 44100"
+                    + " -vf scale=640x480,setsar=1:1,fps=fps=30"
+                    + " -y " + video;
+            CommandLine cmdLine = CommandLine.parse(command);
+            DefaultExecutor executor = new DefaultExecutor();
+            int exitValue = executor.execute(cmdLine);
+            temp.delete();
+            new File(toolBox.TEMP + "temp.txt").delete();
+        } catch (Exception ex) {System.out.println(new Object() {}.getClass().getEnclosingMethod().getName() + "\n" +ex);}
+    }
     
     public static int randomInt(int min, int max) {
         return new Random().nextInt((max - min) + 1) + min;

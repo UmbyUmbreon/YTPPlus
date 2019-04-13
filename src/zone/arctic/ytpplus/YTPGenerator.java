@@ -30,6 +30,8 @@ public class YTPGenerator {
     public boolean effect9;
     public boolean effect10;
     public boolean effect11;
+    public boolean effect12;
+    public boolean effect13;
     public boolean insertTransitionClips;
     
     public Utilities toolBox = new Utilities();
@@ -57,6 +59,8 @@ public class YTPGenerator {
         effect9=true;
         effect10=true;
         effect11=true;
+        effect12=true;
+        effect13=true;
         
         insertTransitionClips=true;
     }
@@ -123,6 +127,7 @@ public class YTPGenerator {
                 cleanUp();
 
                 try {
+
                     PrintWriter writer = new PrintWriter(toolBox.TEMP+"concat.txt", "UTF-8");
                     for (int i = 0; i < MAX_CLIPS; i++) {
                         doneCount = (double) i/MAX_CLIPS;
@@ -144,7 +149,7 @@ public class YTPGenerator {
                             toolBox.snipVideo(sourceToPick, startOfClip, endOfClip, toolBox.TEMP+"video" + i);
                         }
                         //Add a random effect to the video
-                        int effect = randomInt(0, 16);
+                        int effect = randomInt(0, 18);
                         System.out.println("STARTING EFFECT ON CLIP " + i + " EFFECT" + effect);
                         String clipToWorkWith = toolBox.TEMP+"video" + i + ".mp4";
                         switch (effect) {
@@ -194,6 +199,13 @@ public class YTPGenerator {
                                 if (effect11==true)
                                 effectsFactory.effect_Squidward(clipToWorkWith);
                                 break;
+                            case 12:
+                                if (effect12==true)
+                                effectsFactory.effect_Stutter(clipToWorkWith);
+                                break;
+                            case 13:
+                                if (effect13==true)
+                                effectsFactory.effect_FastStutter(clipToWorkWith);
                             default:
                                 break;
                         }
